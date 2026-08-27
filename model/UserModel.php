@@ -46,6 +46,7 @@ function connectUserByUsername(PDO $db, string $uname, string $pwd) :bool|string
             // création d'une session valide
             // remplissage de la variable de session avec le contenu de la requête
             $_SESSION = $response;
+            // $_SESSION['temps']=time();
             // suppression de 2 variables inutiles
             unset($_SESSION['userpwd'],$_SESSION['useruniqid']);
             // création de la variable de session
@@ -54,6 +55,10 @@ function connectUserByUsername(PDO $db, string $uname, string $pwd) :bool|string
             return true;
 
         }else{
+            // on bloque 3 secondes OU
+            // sleep(3);
+            // OU on refait le password_verify pour avoir le même temps de réponses.
+            password_verify($pwd,$response['userpwd']);
             return "Login et/ou mot de passe incorrecte 2";
         }
     }else{
