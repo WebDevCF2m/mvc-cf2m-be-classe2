@@ -4,12 +4,26 @@
 # 2) que lance-t-on à cette ligne ? | Démare une session lors du premier affichage, crée un cookie de session (PHPSESSID) dans le navigateur et un fichier temporaire sur le serveur qui est vide au lencement. Lors des affichages suivant, continue la session si une session valide existe déjà (les variables ne sont jamais stockées coté utilisateur, mais côté serveur)
 session_start();
 
-# 3) que charge-t-on à cette ligne ?
+# 3) que charge-t-on à cette ligne ? | On charge le fichier config.php qui contient des constantes (par exemple de connexion). Il n'est pas présent dans le dossier (.gitignore)
 require_once "../config.php";
-# 4) que charge-t-on à ces lignes ?
+
+# 4) que charge-t-on à ces lignes ? | En procédural, on charge des fichiers de fonctions qui agissent sur les tables, on aurait pu ne charger qu'un fichier avec toutes les fonctions, mais on divise comme si on était en OO -> voir model/CommentModel.php en OO
 require_once "../model/PostModel.php";# table post
 require_once "../model/CategoryModel.php";# table category
 require_once "../model/UserModel.php";# table user
+
+// pour voir un modèle en classe on décommente
+// require_once "../model/CommentModel.php";
+
+// $comment1 = new CommentModel();
+// echo $comment1->id;
+// $comment1->id=180;
+// echo $comment1->id;
+// echo $comment1->getText();
+// $comment1->setText('db');
+// echo $comment1->getText();
+// $comment1->setText('Bonjour les amis');
+// echo $comment1->getText();
 
 
 # 5 ) Nous essayons de lancer quelle type d'objet, et pourquoi?
