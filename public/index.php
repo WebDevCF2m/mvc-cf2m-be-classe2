@@ -26,16 +26,16 @@ require_once "../model/UserModel.php";# table user
 // echo $comment1->getText();
 
 
-# 5 ) Nous essayons de lancer quelle type d'objet, et pourquoi?
+# 5 ) Nous essayons de lancer une connexion à notre base de donnée en utilisant la classe PDO qu'on instancie sous le nom de $connectPDO
 try {
     $connectPDO = new PDO(
         DB_TYPE.':host='.DB_HOST.';port='.DB_PORT.';dbname='.DB_NAME.';charset='.DB_CHARSET,
         DB_LOGIN,
         DB_PWD
     );
-        # 6 ) activation de quoi
+        # 6 ) activation de quoi | Activation de l'affichage des erreurs pour les requêtes (débogage ou gestion des erreurs), Est par défaut depuis PHP 8.0
         $connectPDO->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-        # 7 ) En quoi voulons-nous que les résultats soient retournés par défaut ? 
+        # 7 ) En quoi voulons-nous que les résultats soient retournés par défaut ? | On met par défaut les résultats des requêtes en tableau associatif (fetch et fetchAll (résultats dans un indexé contenant des valeurs associative))
         $connectPDO->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 
     
