@@ -61,7 +61,8 @@ function postOneById(PDO $db, int $id): array|bool{
 }
 
 // 54 ) que récupère-t-on
-function postByCategoryId(PDO $db,int $idcateg): array{
+function postByCategoryId(PDO $db,int $idcateg): array
+{
     $sql = "SELECT p.id, p.title, LEFT(p.content, 255) AS contentshort, p.datecreate, u.id AS iduser, u.userscreen, 
     GROUP_CONCAT(c2.id) AS idcategory, 
     GROUP_CONCAT(c2.title SEPARATOR '||0||') AS titlecategory
