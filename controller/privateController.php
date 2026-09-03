@@ -1,6 +1,8 @@
 <?php
 
-# 32 ) que fait-on ici ?
+# 32 ) que fait-on ici ? | si la variable get 'disconnect'
+# existe on déconnecte l'utilisateur avec la fonction deconnect()
+# du fichier model/UserModel.php puis redirection
 if (isset($_GET['disconnect'])) {
     // si déconnexion renvoie true
     if (deconnect()) {
@@ -9,7 +11,10 @@ if (isset($_GET['disconnect'])) {
         exit();
     }
 
-// 33 ) à quoi pourrait servir ce bloc de code ?   
+// 33 ) à quoi pourrait servir ce bloc de code ? | sinon si 
+# si il existe les variables get  postVisible et id et qu'elles
+# sont de type numérique, on les convertit
+# en entier avec (int) 
 }elseif(isset($_GET['postVisible'],$_GET['id'])
     &&ctype_digit($_GET['postVisible'])
     &&ctype_digit($_GET['id'])
@@ -17,7 +22,9 @@ if (isset($_GET['disconnect'])) {
     $postId = (int) $_GET['id'];
     $postVisible = (int) $_GET['postVisible'];
 
-    // 34 ) que fait-on ici ?
+    // 34 ) que fait-on ici ? | Si on cliqué sur activer ou 
+    # désactiver, on va changer la valeur par son contraire
+    # on fait dans les 2 cas on fait une redirection
     if (postAdminUpdateVisible($connectPDO, $postId, $postVisible)) {
         header("Location: ./?m=L'article dont l'id est $postId a été modifié");
         exit();
@@ -26,13 +33,16 @@ if (isset($_GET['disconnect'])) {
         exit();
     }
 
-// 34 ) que veut on faire ici ?   
+// 34 ) que veut on faire ici ?  | sinon si la variable get
+#  createPost existe
 }elseif(isset($_GET['createPost'])){
 
-    // 35) si on a envoyé ... quoi ?
+    // 35) si on a envoyé ... quoi ? | Si on a rempli le formulaire
     if(isset($_POST['title'],$_POST['content'],$_POST['user_id'])){
+        // 36 ) que fait-on ici ? | conversion en entier
         $UserId = (int) $_POST['user_id']; // si erreur => 0
-        // 36 ) que fait-on ici ?
+        // on retire les espaces, les tags, puis on convertit les 
+        # caractères spéciaux dont les ' et " en entités html 
         $postTitle = htmlspecialchars(strip_tags(trim($_POST['title'])),ENT_QUOTES);
         $postContent = htmlspecialchars(strip_tags(trim($_POST['content'])),ENT_QUOTES);
         // ternaire ! si tableau les valeurs et clefs ne sont pas protégée contre une manipulation externe (injection etc...)
@@ -47,16 +57,20 @@ if (isset($_GET['disconnect'])) {
     }
     }
 
-    // 37 )Appel des catégories pour .
+    // 37 )Appel des catégories pour . | Pour pouvoir créer
+    # les checkboxs des catégories pour le nouvel article
     $categoryChoice = getAllCategoryMenu($connectPDO);
 
-    // 38 ) On appel qui?
+    // 38 ) On appel qui? | On récupère tous les utilisateurs
+    # pour pouvoir sélectionner l'auteur du poste
     $userChoice = getAllUsers($connectPDO);
 
-    // 39) que fait-on ici ?
+    // 39) que fait-on ici ? | On appel la vue privée
+    # d'insertion avec le formulaire
     include "../view/privateView/privateInsertView.php";
 
-// 40 ) que fait-on ici ?  
+// 40 ) que fait-on ici ? | si il existe le updatePost en get et 
+# si il est bien composé que de numérique 
 }elseif(isset($_GET['updatePost'])&&ctype_digit($_GET['updatePost'])){
 
     // si on a envoyé le formulaire de modification
@@ -69,6 +83,7 @@ if (isset($_GET['disconnect'])) {
             $message = $post;
         }
         // 42 ) quel type de retour pour avoir un succès
+        # si la variable $post est strictement true
         if($post===true){
             $message = "L'article a bien été modifié<script>
             setTimeout(\"location.href = './';\", 2000);
@@ -78,10 +93,16 @@ if (isset($_GET['disconnect'])) {
 
     $idUpdatePost = (int) $_GET['updatePost'];
 
-    # 43 ) que récupère t'on
+    # 43 ) que récupère t'on | On récupère le post qu'on 
+    # veut modifier via son id
     $recupPost = postOneById($connectPDO,$idUpdatePost);
 
-    # 44 ) que type de valeur peut-on récupérer ici, et que fait-on ensuite ?
+    # 44 ) que type de valeur peut-on récupérer ici, et que 
+    # fait-on ensuite ? | si la valeur de recupPost est un 
+    # booléen (dans notre cas false envoyé par un fetch vide)
+    # On appel l'erreur 404 (attention utilisation d'une vue)
+    # Frontend qui nécessite le menu
+    
     if(is_bool($recupPost)){
         # récupération du menu pour l'erreur 404
         $recupMenu = getAllCategoryMenu($connectPDO);
