@@ -1,17 +1,19 @@
 <?php
-// 52 ) que récupère-t-on?
+// 52 ) que récupère-t-on? | On récupère les résumé des posts
+# on prend le user et les catégories quand la visibilité
+# vaut 1
 function postHomepageAll(PDO $db): array{
     $sql = "SELECT p.id, p.title, LEFT(p.content, 255) AS contentshort, p.datecreate, u.id AS iduser, u.userscreen, 
     GROUP_CONCAT(c.id) AS idcategory, 
     GROUP_CONCAT(c.title SEPARATOR '||0||') AS titlecategory
     FROM post p
-        INNER JOIN user u
+        LEFT JOIN user u
             ON p.user_id = u.id
         LEFT JOIN category_has_post h 
             ON p.id = h.post_id
         LEFT JOIN category c 
             ON c.id = h.category_id
-        WHERE p.visible = 1
+        WHERE p.visible = 1 -- AND p.id=500
             GROUP BY p.id
     ORDER BY p.datecreate DESC, p.id DESC;";
 
@@ -28,7 +30,10 @@ function postHomepageAll(PDO $db): array{
     return $bp;
 }
 
-// 53 ) que récupère-t-on
+// 53 ) que récupère-t-on - On récupère 1 (ou 0) article complet 
+# par son id et sa visibilité, avec son auteur et ses catégories
+# on reçoit un tableau associatif en cas de réussite et false
+# si on ne peut pas l'afficher (fetch)
 function postOneById(PDO $db, int $id): array|bool{
     // si mauvais format : 0
     // $id = (int) $id;
@@ -38,13 +43,13 @@ function postOneById(PDO $db, int $id): array|bool{
     GROUP_CONCAT(c.id) AS idcategory, 
     GROUP_CONCAT(c.title SEPARATOR '||0||') AS titlecategory
     FROM post p
-        INNER JOIN user u
+        LEFT JOIN user u
             ON p.user_id = u.id
         LEFT JOIN category_has_post h 
             ON p.id = h.post_id
         LEFT JOIN category c 
             ON c.id = h.category_id
-        WHERE p.id = ?
+        WHERE p.id = ? AND p.visible = 1
             GROUP BY p.id;";
 
     try{
@@ -60,14 +65,17 @@ function postOneById(PDO $db, int $id): array|bool{
 
 }
 
-// 54 ) que récupère-t-on
+// 54 ) que récupère-t-on | On récupère les résumés des posts
+# qui se trouvent dans la catégorie, par l'id de la catégorie
+# La double jointure permet de récupérer toutes les catégories
+# de chaque article
 function postByCategoryId(PDO $db,int $idcateg): array
 {
     $sql = "SELECT p.id, p.title, LEFT(p.content, 255) AS contentshort, p.datecreate, u.id AS iduser, u.userscreen, 
     GROUP_CONCAT(c2.id) AS idcategory, 
     GROUP_CONCAT(c2.title SEPARATOR '||0||') AS titlecategory
     FROM post p
-        INNER JOIN user u
+        LEFT JOIN user u
             ON p.user_id = u.id
         LEFT JOIN category_has_post h 
             ON p.id = h.post_id
@@ -78,7 +86,7 @@ function postByCategoryId(PDO $db,int $idcateg): array
             ON p.id = h2.post_id
         LEFT JOIN category c2 
             ON c2.id = h2.category_id
-        WHERE c.id = :id
+        WHERE c.id = :id AND p.visible = 1
             GROUP BY p.id
     ORDER BY p.datecreate DESC;";
 
@@ -94,7 +102,8 @@ function postByCategoryId(PDO $db,int $idcateg): array
     return $return;
 }
 
-// 55) que récupère-t-on
+// 55) que récupère-t-on | On récupère les résumés des posts
+# visibles en utilisant l'id de l'utilisateur
 function postByUserId(PDO $db,int $iduser): array{
     $sql = "SELECT p.id, p.title, LEFT(p.content, 255) AS contentshort, p.datecreate, u.id AS iduser, u.userscreen, 
     GROUP_CONCAT(c.id) AS idcategory, 
@@ -107,7 +116,7 @@ function postByUserId(PDO $db,int $iduser): array{
         LEFT JOIN category c 
             ON c.id = h.category_id
        
-        WHERE u.id = ?
+        WHERE u.id = ? AND p.visible = 1
             GROUP BY p.id
     ORDER BY p.datecreate DESC;";
     $prepare = $db->prepare($sql);
@@ -121,12 +130,17 @@ function postByUserId(PDO $db,int $iduser): array{
     return $return;
 }
 
-// 56) que fait cette fonction ?
-    function trunCate (string $text): string{
+// 56) que fait cette fonction ? | fonction qui reçoit un
+# string en paramètre, il trouve la postion du dernier espace
+# il renvoie la chaîne en coupant du début jusqu'au dernier 
+# espace trouvé
+function trunCate (string $text): string
+{
     $cut = strrpos($text, ' ');
     return substr ($text, 0,$cut);
 }
-// 57) que fait cette fonction
+// 57) que fait cette fonction | Tranforme la date de l'anglais
+# au français
   function dateToFrench(string $date, string $format="l j F Y \à h \h i "): string{
     $english_days = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
     $french_days = array('lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');

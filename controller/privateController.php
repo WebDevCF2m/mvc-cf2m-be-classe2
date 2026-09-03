@@ -114,17 +114,18 @@ if (isset($_GET['disconnect'])) {
     // on a trouvé l'article    
     }else{
 
-    // 45) on appel les ...
+    // 45) on appel les ... | catégories pour l'update
     $categoryChoice = getAllCategoryMenu($connectPDO);
 
-    // 46 ) on appel les ...
+    // 46 ) on appel les ... | users pour l'update
     $userChoice = getAllUsers($connectPDO);
 
-    // 47 ) on appel la ...
+    // 47 ) on appel la ... | la vue de la page privée pour l'update
     include "../view/privateView/privateUpdateView.php";
 }
 
-// 48 ) que fait-on ici ? 
+// 48 ) que fait-on ici ? | Si on trouve la variable get
+# deletePost et qu'elle contient que des numériques
 }elseif(isset($_GET['deletePost'])&&ctype_digit($_GET['deletePost'])){
 
     $postId = (int) $_GET['deletePost'];
@@ -138,7 +139,8 @@ if (isset($_GET['disconnect'])) {
     }
 
     
-// 49) quel est cette page  
+// 49) quel est cette page  | Sinon on est sur la page
+# d'accueil de l'administration
 }else{
     // appel due la méthode (fonction) modèle PostModel pour afficher tous les articles SANS restrictions
     $postAll = postAdminHomepageAll($connectPDO);
